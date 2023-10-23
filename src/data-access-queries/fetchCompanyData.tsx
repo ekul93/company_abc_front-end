@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export interface CompanyData {
+  Zip: string;
   Name: string;
   Email: string;
   Phone: string;
@@ -9,9 +10,8 @@ export interface CompanyData {
   State: string;
 }
 
-function FetchCompanyData() {
+function FetchCompanyData({ city, state, zip }: { city: string; state: string, zip: string}) {
   const [data, setData] = useState<CompanyData[]>([]);
-
   console.log('data', data);
 
   useEffect(() => {
@@ -23,11 +23,28 @@ function FetchCompanyData() {
     fetchData();
   }, []);
 
+  const filteredData = data.filter((item) => {
+    if (city && state && zip) {
+      return (
+        item.City.toLowerCase().includes(city.toLowerCase()) &&
+        item.State.toLowerCase().includes(state.toLowerCase())&&
+        item.Zip.toLowerCase().includes(zip.toLowerCase())
+      );
+    } else if (city) {
+      return item.City.toLowerCase().includes(city.toLowerCase());
+    } else if (state) {
+      return item.State.toLowerCase().includes(state.toLowerCase());
+    } else if (zip){
+      return item.Zip.toLowerCase().includes(zip.toLowerCase());
+    }
+    return true;
+  });
+
   return (
     <div>
-      {data.map(({ Name, City }: CompanyData) => (
+      {filteredData.map(({ Name }: CompanyData) => (
         <div>
-          <li key={Name}>{City}</li>
+          <li key={Name}>{Name}</li>
         </div>
       ))}
     </div>
