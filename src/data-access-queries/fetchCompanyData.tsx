@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export interface CompanyData {
+export interface companyData {
   Zip: string;
   Name: string;
   Email: string;
@@ -11,17 +11,24 @@ export interface CompanyData {
 }
 
 function FetchCompanyData({ city, state, zip }: { city: string; state: string, zip: string}) {
-  const [data, setData] = useState<CompanyData[]>([]);
+  const [data, setData] = useState<companyData[]>([]);
   console.log('data', data);
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch('http://localhost:3002/fetchData');
+      const queryParams = new URLSearchParams({       
+        city,
+        state,
+        zip
+      });
+  
+      const response = await fetch(`http://localhost:3000/fetchData?${queryParams}`);
       const json = await response.json();
       setData(json);
-    }
+    }  
+
     fetchData();
-  }, []);
+  }, [city, state, zip]);
 
   const filteredData = data.filter((item) => {
     if (city && state && zip) {
@@ -42,7 +49,7 @@ function FetchCompanyData({ city, state, zip }: { city: string; state: string, z
 
   return (
     <div>
-      {filteredData.map(({ Name }: CompanyData) => (
+      {filteredData.map(({ Name }: companyData) => (
         <div>
           <li key={Name}>{Name}</li>
         </div>
